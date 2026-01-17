@@ -1,4 +1,4 @@
-import { desc, sql, gte } from "drizzle-orm";
+import { desc, gte, sql } from "drizzle-orm";
 import { getDB } from "../db";
 import { pairs, swaps, tokens } from "../db/schema";
 import { logger } from "../utils/logger";
@@ -11,16 +11,10 @@ export async function getOverallStats() {
 
   try {
     // Total pairs
-    const pairCount = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(pairs)
-      .execute();
+    const pairCount = await db.select({ count: sql<number>`count(*)` }).from(pairs).execute();
 
     // Total tokens
-    const tokenCount = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(tokens)
-      .execute();
+    const tokenCount = await db.select({ count: sql<number>`count(*)` }).from(tokens).execute();
 
     // Total swaps (24h)
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);

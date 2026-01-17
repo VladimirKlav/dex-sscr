@@ -1,6 +1,6 @@
-import { desc, eq, sql, and, gte, lte } from "drizzle-orm";
+import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { getDB } from "../db";
-import { pairs, tokens, swaps, liquidityEvents } from "../db/schema";
+import { liquidityEvents, pairs, swaps, tokens } from "../db/schema";
 import { logger } from "../utils/logger";
 
 /**
@@ -42,9 +42,7 @@ export async function getPairs(params: {
 
     // Apply sorting
     if (params.sortBy === "age") {
-      query = query.orderBy(
-        params.sortOrder === "asc" ? pairs.createdAt : desc(pairs.createdAt),
-      );
+      query = query.orderBy(params.sortOrder === "asc" ? pairs.createdAt : desc(pairs.createdAt));
     } else {
       query = query.orderBy(desc(pairs.createdAt)); // Default: newest first
     }

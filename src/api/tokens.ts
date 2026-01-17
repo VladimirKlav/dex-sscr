@@ -1,6 +1,6 @@
 import { desc, eq, sql } from "drizzle-orm";
 import { getDB } from "../db";
-import { tokens, pairs, holders } from "../db/schema";
+import { holders, pairs, tokens } from "../db/schema";
 import { logger } from "../utils/logger";
 
 /**

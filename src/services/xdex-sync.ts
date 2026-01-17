@@ -3,11 +3,11 @@
  * Syncs data from XDEX REST API to our local database
  */
 
+import { eq } from "drizzle-orm";
 import { getDB } from "../db";
-import { tokens, pairs } from "../db/schema";
+import { pairs, tokens } from "../db/schema";
 import { getXDEXClient, type XDEXNetwork } from "../lib/xdex-api";
 import { logger } from "../utils/logger";
-import { eq } from "drizzle-orm";
 
 export class XDEXSyncService {
   private client = getXDEXClient();
@@ -98,9 +98,7 @@ export class XDEXSyncService {
             iconUrl: xdexToken.logoURI || "",
           });
 
-          logger.debug(
-            `[XDEX Sync] Inserted new token: ${xdexToken.symbol} (${xdexToken.mint})`,
-          );
+          logger.debug(`[XDEX Sync] Inserted new token: ${xdexToken.symbol} (${xdexToken.mint})`);
         } catch (error) {
           logger.error(`[XDEX Sync] Error syncing token ${xdexToken.mint}:`, error);
         }
@@ -158,9 +156,7 @@ export class XDEXSyncService {
             lastSyncedBlock: 0,
           });
 
-          logger.debug(
-            `[XDEX Sync] Inserted new pool: ${xdexPool.token0.symbol}/${xdexPool.token1.symbol}`,
-          );
+          logger.debug(`[XDEX Sync] Inserted new pool: ${xdexPool.token0.symbol}/${xdexPool.token1.symbol}`);
         } catch (error) {
           logger.error(`[XDEX Sync] Error syncing pool ${xdexPool.address}:`, error);
         }
@@ -173,7 +169,13 @@ export class XDEXSyncService {
   /**
    * Ensure a token exists in the database
    */
-  private async ensureToken(tokenInfo: { mint: string; symbol: string; name: string; decimals: number; logoURI?: string }) {
+  private async ensureToken(tokenInfo: {
+    mint: string;
+    symbol: string;
+    name: string;
+    decimals: number;
+    logoURI?: string;
+  }) {
     const existing = await this.db.query.tokens.findFirst({
       where: eq(tokens.address, tokenInfo.mint.toLowerCase()),
     });

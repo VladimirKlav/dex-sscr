@@ -1,4 +1,4 @@
-import { createPublicClient, http, type PublicClient, type Block } from "viem";
+import { type Block, createPublicClient, http, type PublicClient } from "viem";
 import { X1_CONFIG } from "../config/x1";
 import { logger } from "../utils/logger";
 
@@ -88,10 +88,7 @@ export class X1RpcClient {
   /**
    * Subscribe to new blocks (polling-based since HTTP doesn't support subscriptions)
    */
-  async watchBlocks(
-    callback: (block: Block) => void,
-    options: { pollingInterval?: number } = {},
-  ): Promise<() => void> {
+  async watchBlocks(callback: (block: Block) => void, options: { pollingInterval?: number } = {}): Promise<() => void> {
     const pollingInterval = options.pollingInterval || 5000;
     let lastBlockNumber = await this.getBlockNumber();
     let isRunning = true;

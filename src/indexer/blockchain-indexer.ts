@@ -1,10 +1,10 @@
 import { encodeEventTopics } from "viem";
-import { getRpcClient } from "../lib/rpc-client";
-import { DEX_CONFIGS, INDEXER_CONFIG } from "../config/x1";
-import { eventProcessor } from "./event-processor";
-import { logger } from "../utils/logger";
 import factoryAbi from "../abi/uniswap-v2-factory.json";
 import pairAbi from "../abi/uniswap-v2-pair.json";
+import { DEX_CONFIGS, INDEXER_CONFIG } from "../config/x1";
+import { getRpcClient } from "../lib/rpc-client";
+import { logger } from "../utils/logger";
+import { eventProcessor } from "./event-processor";
 
 /**
  * Blockchain Indexer
@@ -59,8 +59,7 @@ export class BlockchainIndexer {
     const batchSize = BigInt(INDEXER_CONFIG.batchSize);
 
     while (this.currentBlock < latestBlock && this.isRunning) {
-      const toBlock =
-        this.currentBlock + batchSize <= latestBlock ? this.currentBlock + batchSize : latestBlock;
+      const toBlock = this.currentBlock + batchSize <= latestBlock ? this.currentBlock + batchSize : latestBlock;
 
       try {
         await this.indexBlockRange(this.currentBlock, toBlock);
@@ -221,8 +220,7 @@ export class BlockchainIndexer {
    */
   async getStatus() {
     const latestBlock = await this.rpc.getBlockNumber();
-    const progress =
-      this.currentBlock > 0n ? (Number(this.currentBlock) / Number(latestBlock)) * 100 : 0;
+    const progress = this.currentBlock > 0n ? (Number(this.currentBlock) / Number(latestBlock)) * 100 : 0;
 
     return {
       isRunning: this.isRunning,

@@ -1,13 +1,13 @@
+import { eq } from "drizzle-orm";
 import { decodeEventLog, type Log } from "viem";
-import { getDB } from "../db";
-import { pairs, swaps, liquidityEvents, tokens } from "../db/schema";
-import { DEX_CONFIGS } from "../config/x1";
-import { logger } from "../utils/logger";
+import erc20Abi from "../abi/erc20.json";
 import factoryAbi from "../abi/uniswap-v2-factory.json";
 import pairAbi from "../abi/uniswap-v2-pair.json";
-import erc20Abi from "../abi/erc20.json";
+import { DEX_CONFIGS } from "../config/x1";
+import { getDB } from "../db";
+import { liquidityEvents, pairs, swaps, tokens } from "../db/schema";
 import { getRpcClient } from "../lib/rpc-client";
-import { eq } from "drizzle-orm";
+import { logger } from "../utils/logger";
 
 /**
  * Event Processor
@@ -46,20 +46,23 @@ export class EventProcessor {
       const block = await this.rpc.getBlock(log.blockNumber);
 
       // Store pair in database
-      await this.db.insert(pairs).values({
-        address: pair.toLowerCase(),
-        dex: dexName,
-        factory: factoryAddress.toLowerCase(),
-        token0: token0.toLowerCase(),
-        token1: token1.toLowerCase(),
-        reserve0: "0",
-        reserve1: "0",
-        totalSupply: "0",
-        createdBlock: Number(log.blockNumber),
-        createdTx: log.transactionHash || "0x",
-        createdAt: new Date(Number(block.timestamp) * 1000),
-        lastSyncedBlock: Number(log.blockNumber),
-      }).onConflictDoNothing();
+      await this.db
+        .insert(pairs)
+        .values({
+          address: pair.toLowerCase(),
+          dex: dexName,
+          factory: factoryAddress.toLowerCase(),
+          token0: token0.toLowerCase(),
+          token1: token1.toLowerCase(),
+          reserve0: "0",
+          reserve1: "0",
+          totalSupply: "0",
+          createdBlock: Number(log.blockNumber),
+          createdTx: log.transactionHash || "0x",
+          createdAt: new Date(Number(block.timestamp) * 1000),
+          lastSyncedBlock: Number(log.blockNumber),
+        })
+        .onConflictDoNothing();
 
       logger.info(`[Indexer] Stored pair ${pair} in database`);
     } catch (error) {
@@ -92,20 +95,23 @@ export class EventProcessor {
       const block = await this.rpc.getBlock(log.blockNumber);
       const swapId = `${log.transactionHash}:${log.logIndex}`;
 
-      await this.db.insert(swaps).values({
-        id: swapId,
-        pair: log.address.toLowerCase(),
-        txHash: log.transactionHash || "0x",
-        blockNumber: Number(log.blockNumber),
-        logIndex: Number(log.logIndex),
-        sender: sender.toLowerCase(),
-        to: to.toLowerCase(),
-        amount0In: amount0In.toString(),
-        amount1In: amount1In.toString(),
-        amount0Out: amount0Out.toString(),
-        amount1Out: amount1Out.toString(),
-        timestamp: new Date(Number(block.timestamp) * 1000),
-      }).onConflictDoNothing();
+      await this.db
+        .insert(swaps)
+        .values({
+          id: swapId,
+          pair: log.address.toLowerCase(),
+          txHash: log.transactionHash || "0x",
+          blockNumber: Number(log.blockNumber),
+          logIndex: Number(log.logIndex),
+          sender: sender.toLowerCase(),
+          to: to.toLowerCase(),
+          amount0In: amount0In.toString(),
+          amount1In: amount1In.toString(),
+          amount0Out: amount0Out.toString(),
+          amount1Out: amount1Out.toString(),
+          timestamp: new Date(Number(block.timestamp) * 1000),
+        })
+        .onConflictDoNothing();
 
       logger.debug(`[Indexer] Processed swap ${swapId}`);
     } catch (error) {
@@ -135,19 +141,22 @@ export class EventProcessor {
       const block = await this.rpc.getBlock(log.blockNumber);
       const eventId = `${log.transactionHash}:${log.logIndex}`;
 
-      await this.db.insert(liquidityEvents).values({
-        id: eventId,
-        pair: log.address.toLowerCase(),
-        type: "mint",
-        txHash: log.transactionHash || "0x",
-        blockNumber: Number(log.blockNumber),
-        logIndex: Number(log.logIndex),
-        sender: sender.toLowerCase(),
-        amount0: amount0.toString(),
-        amount1: amount1.toString(),
-        liquidity: "0", // Will be updated from Sync event
-        timestamp: new Date(Number(block.timestamp) * 1000),
-      }).onConflictDoNothing();
+      await this.db
+        .insert(liquidityEvents)
+        .values({
+          id: eventId,
+          pair: log.address.toLowerCase(),
+          type: "mint",
+          txHash: log.transactionHash || "0x",
+          blockNumber: Number(log.blockNumber),
+          logIndex: Number(log.logIndex),
+          sender: sender.toLowerCase(),
+          amount0: amount0.toString(),
+          amount1: amount1.toString(),
+          liquidity: "0", // Will be updated from Sync event
+          timestamp: new Date(Number(block.timestamp) * 1000),
+        })
+        .onConflictDoNothing();
 
       logger.debug(`[Indexer] Processed mint ${eventId}`);
     } catch (error) {
@@ -178,19 +187,22 @@ export class EventProcessor {
       const block = await this.rpc.getBlock(log.blockNumber);
       const eventId = `${log.transactionHash}:${log.logIndex}`;
 
-      await this.db.insert(liquidityEvents).values({
-        id: eventId,
-        pair: log.address.toLowerCase(),
-        type: "burn",
-        txHash: log.transactionHash || "0x",
-        blockNumber: Number(log.blockNumber),
-        logIndex: Number(log.logIndex),
-        sender: sender.toLowerCase(),
-        amount0: amount0.toString(),
-        amount1: amount1.toString(),
-        liquidity: "0", // Will be updated from Sync event
-        timestamp: new Date(Number(block.timestamp) * 1000),
-      }).onConflictDoNothing();
+      await this.db
+        .insert(liquidityEvents)
+        .values({
+          id: eventId,
+          pair: log.address.toLowerCase(),
+          type: "burn",
+          txHash: log.transactionHash || "0x",
+          blockNumber: Number(log.blockNumber),
+          logIndex: Number(log.logIndex),
+          sender: sender.toLowerCase(),
+          amount0: amount0.toString(),
+          amount1: amount1.toString(),
+          liquidity: "0", // Will be updated from Sync event
+          timestamp: new Date(Number(block.timestamp) * 1000),
+        })
+        .onConflictDoNothing();
 
       logger.debug(`[Indexer] Processed burn ${eventId}`);
     } catch (error) {
@@ -231,26 +243,32 @@ export class EventProcessor {
         }),
       ]);
 
-      await this.db.insert(tokens).values({
-        address: tokenAddress.toLowerCase(),
-        name,
-        symbol,
-        decimals,
-        iconUrl: "", // TODO: Fetch from token list or generate
-      }).onConflictDoNothing();
+      await this.db
+        .insert(tokens)
+        .values({
+          address: tokenAddress.toLowerCase(),
+          name,
+          symbol,
+          decimals,
+          iconUrl: "", // TODO: Fetch from token list or generate
+        })
+        .onConflictDoNothing();
 
       logger.info(`[Indexer] Stored token metadata: ${symbol} (${tokenAddress})`);
     } catch (error) {
       logger.error(`[Indexer] Error fetching token metadata for ${tokenAddress}:`, error);
 
       // Store with placeholder data if fetch fails
-      await this.db.insert(tokens).values({
-        address: tokenAddress.toLowerCase(),
-        name: "Unknown",
-        symbol: "UNKNOWN",
-        decimals: 18,
-        iconUrl: "",
-      }).onConflictDoNothing();
+      await this.db
+        .insert(tokens)
+        .values({
+          address: tokenAddress.toLowerCase(),
+          name: "Unknown",
+          symbol: "UNKNOWN",
+          decimals: 18,
+          iconUrl: "",
+        })
+        .onConflictDoNothing();
     }
   }
 }

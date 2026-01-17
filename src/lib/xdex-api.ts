@@ -131,9 +131,7 @@ export class XDEXApiClient {
    */
   async getToken(mint: string): Promise<XDEXTokenInfo | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/token/${mint}?network=${this.network}`,
-      );
+      const response = await fetch(`${this.baseUrl}/token/${mint}?network=${this.network}`);
 
       if (!response.ok) {
         if (response.status === 404) return null;
@@ -174,9 +172,7 @@ export class XDEXApiClient {
    */
   async getPool(address: string): Promise<XDEXPoolInfo | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/pool/${address}?network=${this.network}`,
-      );
+      const response = await fetch(`${this.baseUrl}/pool/${address}?network=${this.network}`);
 
       if (!response.ok) {
         if (response.status === 404) return null;
@@ -221,9 +217,7 @@ export class XDEXApiClient {
    */
   async getTokenPrice(mint: string): Promise<number | null> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/price/${mint}?network=${this.network}`,
-      );
+      const response = await fetch(`${this.baseUrl}/price/${mint}?network=${this.network}`);
 
       if (!response.ok) {
         if (response.status === 404) return null;

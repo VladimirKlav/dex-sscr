@@ -2,14 +2,14 @@
  * Cloudflare Worker for X1 Trading Bot API & Chart Generation
  */
 
+import * as pairsApi from "./api/pairs";
+import * as statsApi from "./api/stats";
+import * as tokensApi from "./api/tokens";
 import { generateChart } from "./chart-generator";
 import { CHART_DEFAULTS } from "./constants";
+import { getIndexer } from "./indexer/blockchain-indexer";
 import type { ChartGenerationConfig } from "./types";
 import { logger } from "./utils/logger";
-import * as pairsApi from "./api/pairs";
-import * as tokensApi from "./api/tokens";
-import * as statsApi from "./api/stats";
-import { getIndexer } from "./indexer/blockchain-indexer";
 
 // For R2 upload functionality, import:
 // import { generateChartWithR2 } from "./chart-generator";
@@ -59,12 +59,7 @@ export default {
       if (url.pathname === "/api/pairs" && request.method === "GET") {
         const limit = parseInt(url.searchParams.get("limit") || "50");
         const offset = parseInt(url.searchParams.get("offset") || "0");
-        const sortBy = url.searchParams.get("sortBy") as
-          | "liquidity"
-          | "volume"
-          | "age"
-          | "holders"
-          | undefined;
+        const sortBy = url.searchParams.get("sortBy") as "liquidity" | "volume" | "age" | "holders" | undefined;
         const dex = url.searchParams.get("dex") || undefined;
 
         const result = await pairsApi.getPairs({ limit, offset, sortBy, dex });
@@ -113,11 +108,7 @@ export default {
       }
 
       // Get token by address
-      if (
-        url.pathname.startsWith("/api/tokens/") &&
-        request.method === "GET" &&
-        !url.pathname.includes("search")
-      ) {
+      if (url.pathname.startsWith("/api/tokens/") && request.method === "GET" && !url.pathname.includes("search")) {
         const address = url.pathname.split("/api/tokens/")[1];
         if (address) {
           const result = await tokensApi.getTokenByAddress(address);
@@ -172,11 +163,7 @@ export default {
 /**
  * Helper function to create JSON responses with CORS headers
  */
-function jsonResponse(
-  data: any,
-  headers: Record<string, string> = {},
-  status = 200,
-): Response {
+function jsonResponse(data: any, headers: Record<string, string> = {}, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
@@ -189,10 +176,7 @@ function jsonResponse(
 /**
  * Handle chart generation request
  */
-async function handleGenerateChart(
-  request: Request,
-  corsHeaders: Record<string, string>,
-): Promise<Response> {
+async function handleGenerateChart(request: Request, corsHeaders: Record<string, string>): Promise<Response> {
   try {
     const body = (await request.json()) as ChartRequest;
     const { tokenAddress, entryPrice, isBullish, periodHours, width, height, dpr } = body;
@@ -203,19 +187,11 @@ async function handleGenerateChart(
     }
 
     if (typeof entryPrice !== "number") {
-      return jsonResponse(
-        { error: "entryPrice is required and must be a number" },
-        corsHeaders,
-        400,
-      );
+      return jsonResponse({ error: "entryPrice is required and must be a number" }, corsHeaders, 400);
     }
 
     if (typeof isBullish !== "boolean") {
-      return jsonResponse(
-        { error: "isBullish is required and must be a boolean" },
-        corsHeaders,
-        400,
-      );
+      return jsonResponse({ error: "isBullish is required and must be a boolean" }, corsHeaders, 400);
     }
 
     // Create configuration with defaults
