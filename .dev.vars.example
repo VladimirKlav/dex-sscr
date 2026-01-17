@@ -5,12 +5,12 @@ DATABASE_URL=postgres://user:password@host:5432/database
 X1_RPC_URL=https://rpc.x1.xyz
 
 # DEX Contract Addresses (Update with actual addresses)
-# X1Swap Factory Contract
-X1SWAP_FACTORY=0x0000000000000000000000000000000000000000
-# X1Swap Router Contract
-X1SWAP_ROUTER=0x0000000000000000000000000000000000000000
-# X1Swap Init Code Hash (for CREATE2 pair address calculation)
-X1SWAP_INIT_CODE_HASH=
+# XDEX Factory Contract - Find at https://explorer.x1.xyz or https://app.xdex.xyz
+XDEX_FACTORY=0x0000000000000000000000000000000000000000
+# XDEX Router Contract
+XDEX_ROUTER=0x0000000000000000000000000000000000000000
+# XDEX Init Code Hash (for CREATE2 pair address calculation)
+XDEX_INIT_CODE_HASH=
 
 # Common Token Addresses
 WETH_ADDRESS=0x0000000000000000000000000000000000000000  # Wrapped XN

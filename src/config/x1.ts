@@ -1,11 +1,15 @@
 /**
  * X1 Network Configuration
+ *
+ * NOTE: X1 blockchain architecture needs verification.
+ * Some sources indicate SVM-based (Solana VM), while explorer suggests EVM compatibility.
+ * Currently configured for EVM-style indexing. May need adjustment based on actual architecture.
  */
 export const X1_CONFIG = {
   chainId: 204005,
   name: "X1 Network",
   rpcUrl: process.env.X1_RPC_URL || "https://rpc.x1.xyz",
-  explorerUrl: "https://explorer.x1.xyz",
+  explorerUrl: "https://explorer.x1.xyz", // Mainnet: https://explorer.mainnet.x1.xyz
   nativeCurrency: {
     name: "XN",
     symbol: "XN",
@@ -19,17 +23,20 @@ export const X1_CONFIG = {
 
 /**
  * DEX Configurations
- * Add your DEX factory and router addresses here
+ * Main DEX on X1: XDEX (https://app.xdex.xyz)
+ *
+ * IMPORTANT: Update these addresses by visiting https://explorer.x1.xyz
+ * and searching for XDEX contracts
  */
 export const DEX_CONFIGS = [
   {
-    name: "X1Swap",
-    factory: process.env.X1SWAP_FACTORY || "0x0000000000000000000000000000000000000000", // TODO: Update with actual address
-    router: process.env.X1SWAP_ROUTER || "0x0000000000000000000000000000000000000000", // TODO: Update with actual address
-    initCodeHash: process.env.X1SWAP_INIT_CODE_HASH || "", // For CREATE2 pair address calculation
-    version: "v2" as const,
+    name: "XDEX",
+    factory: process.env.XDEX_FACTORY || "0x0000000000000000000000000000000000000000", // TODO: Find actual XDEX factory address
+    router: process.env.XDEX_ROUTER || "0x0000000000000000000000000000000000000000", // TODO: Find actual XDEX router address
+    initCodeHash: process.env.XDEX_INIT_CODE_HASH || "", // For CREATE2 pair address calculation
+    version: "v2" as const, // Assuming Uniswap V2 style - verify with actual implementation
   },
-  // Add more DEXs as needed (e.g., QuickSwap when deployed on X1)
+  // Add more DEXs as they launch on X1
 ] as const;
 
 /**
