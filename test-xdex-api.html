@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XDEX API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .endpoint-group {
+            margin-bottom: 30px;
+        }
+        .endpoint-group h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .endpoint-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #ddd;
+        }
+        .endpoint-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .endpoint-item.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .endpoint-method {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #007bff;
+            color: white;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .test-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #5568d3;
+        }
+        .test-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            font-size: 12px;
+            max-height: 200px;
+            overflow: auto;
+        }
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .status.pending {
+            background: #ffc107;
+            color: #333;
+        }
+        .status.success {
+            background: #28a745;
+            color: white;
+        }
+        .status.error {
+            background: #dc3545;
+            color: white;
+        }
+        .test-all-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .test-all-btn:hover {
+            background: #218838;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 XDEX API Endpoint Tester</h1>
+        <p class="subtitle">Test XDEX REST API endpoints to discover which ones work</p>
+
+        <button class="test-all-btn" onclick="testAllEndpoints()">🚀 Test All Endpoints</button>
+
+        <div class="endpoint-group">
+            <h2>📝 Token Endpoints</h2>
+            <div id="token-endpoints"></div>
+        </div>
+
+        <div class="endpoint-group">
+            <h2>💧 Pool/Pair Endpoints</h2>
+            <div id="pool-endpoints"></div>
+        </div>
+
+        <div class="endpoint-group">
+            <h2>📊 Statistics Endpoints</h2>
+            <div id="stats-endpoints"></div>
+        </div>
+
+        <div class="endpoint-group">
+            <h2>🔄 Swap Endpoints</h2>
+            <div id="swap-endpoints"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.xdex.xyz/api/xendex';
+        const NETWORK = 'X1 Mainnet';
+
+        const endpoints = {
+            tokens: [
+                { method: 'GET', path: '/tokens', params: `?network=${encodeURIComponent(NETWORK)}` },
+                { method: 'GET', path: '/token-list', params: `?network=${encodeURIComponent(NETWORK)}` },
+                { method: 'GET', path: '/tokens/list', params: `?network=${encodeURIComponent(NETWORK)}` },
+            ],
+            pools: [
+                { method: 'GET', path: '/pools', params: `?network=${encodeURIComponent(NETWORK)}` },
+                { method: 'GET', path: '/pools/list', params: `?network=${encodeURIComponent(NETWORK)}` },
+                { method: 'GET', path: '/pairs', params: `?network=${encodeURIComponent(NETWORK)}` },
+            ],
+            stats: [
+                { method: 'GET', path: '/stats', params: `?network=${encodeURIComponent(NETWORK)}` },
+                { method: 'GET', path: '/stats/24h', params: `?network=${encodeURIComponent(NETWORK)}` },
+                { method: 'GET', path: '/statistics', params: `?network=${encodeURIComponent(NETWORK)}` },
+            ],
+            swap: [
+                { method: 'POST', path: '/swap/prepare', params: '', body: {
+                    network: NETWORK,
+                    wallet: '11111111111111111111111111111111',
+                    token_in: 'So11111111111111111111111111111111111111112',
+                    token_out: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+                    token_in_amount: 0.01,
+                    is_exact_amount_in: true
+                }},
+            ]
+        };
+
+        function renderEndpoint(endpoint, containerId, index) {
+            const container = document.getElementById(containerId);
+            const item = document.createElement('div');
+            item.className = 'endpoint-item';
+            item.id = `endpoint-${containerId}-${index}`;
+
+            const url = `${API_BASE}${endpoint.path}${endpoint.params}`;
+
+            item.innerHTML = `
+                <div>
+                    <span class="endpoint-method">${endpoint.method}</span>
+                    <span class="endpoint-url">${endpoint.path}${endpoint.params}</span>
+                    <span class="status pending" id="status-${containerId}-${index}">Pending</span>
+                    <button class="test-btn" onclick="testEndpoint('${containerId}', ${index})">Test</button>
+                </div>
+                <div class="result" id="result-${containerId}-${index}" style="display: none;"></div>
+            `;
+
+            container.appendChild(item);
+        }
+
+        async function testEndpoint(group, index) {
+            const endpoint = endpoints[group][index];
+            const statusEl = document.getElementById(`status-${group}-${index}`);
+            const resultEl = document.getElementById(`result-${group}-${index}`);
+            const itemEl = document.getElementById(`endpoint-${group}-${index}`);
+
+            statusEl.textContent = 'Testing...';
+            statusEl.className = 'status pending';
+            resultEl.style.display = 'none';
+            itemEl.className = 'endpoint-item';
+
+            try {
+                const url = `${API_BASE}${endpoint.path}${endpoint.params}`;
+                const options = {
+                    method: endpoint.method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+
+                if (endpoint.body) {
+                    options.body = JSON.stringify(endpoint.body);
+                }
+
+                const response = await fetch(url, options);
+                const data = await response.text();
+
+                if (response.ok) {
+                    statusEl.textContent = `✅ ${response.status} OK`;
+                    statusEl.className = 'status success';
+                    itemEl.className = 'endpoint-item success';
+
+                    let parsed;
+                    try {
+                        parsed = JSON.parse(data);
+                        resultEl.innerHTML = `<strong>Response:</strong><pre>${JSON.stringify(parsed, null, 2)}</pre>`;
+                    } catch {
+                        resultEl.innerHTML = `<strong>Response:</strong><pre>${data}</pre>`;
+                    }
+                    resultEl.style.display = 'block';
+                } else {
+                    statusEl.textContent = `❌ ${response.status} ${response.statusText}`;
+                    statusEl.className = 'status error';
+                    itemEl.className = 'endpoint-item error';
+                    resultEl.innerHTML = `<strong>Error:</strong><pre>${data || 'No response body'}</pre>`;
+                    resultEl.style.display = 'block';
+                }
+            } catch (error) {
+                statusEl.textContent = `❌ Error`;
+                statusEl.className = 'status error';
+                itemEl.className = 'endpoint-item error';
+                resultEl.innerHTML = `<strong>Error:</strong><pre>${error.message}</pre>`;
+                resultEl.style.display = 'block';
+            }
+        }
+
+        async function testAllEndpoints() {
+            const groups = Object.keys(endpoints);
+            for (const group of groups) {
+                for (let i = 0; i < endpoints[group].length; i++) {
+                    await testEndpoint(group, i);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+        }
+
+        // Render all endpoints on page load
+        window.onload = () => {
+            Object.keys(endpoints).forEach((group, groupIndex) => {
+                const containerId = `${group}-endpoints`;
+                endpoints[group].forEach((endpoint, index) => {
+                    renderEndpoint(endpoint, containerId, index);
+                });
+            });
+        };
+    </script>
+</body>
+</html>
