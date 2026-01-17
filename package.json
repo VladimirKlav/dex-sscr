@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun run --watch src/worker.ts",
     "start": "bun run src/worker.ts",
+    "indexer": "tsx --env-file .dev.vars scripts/start-indexer.ts",
     "gen-chart": "tsx --env-file .dev.vars scripts/gen-chart.ts",
     "gen-chart-r2": "tsx --env-file .dev.vars scripts/gen-chart-2-r2.ts",
     "clean": "rm -rf ./data/*",
@@ -19,6 +20,7 @@
     "@biomejs/biome": "2.1.2",
     "@types/bun": "latest",
     "@types/skia-canvas": "^0.9.28",
+    "@types/ws": "^8.18.1",
     "drizzle-kit": "^0.31.4",
     "tsup": "^8.0.2",
     "tsx": "^4.20.3"
@@ -30,7 +32,9 @@
     "@neondatabase/serverless": "^1.0.1",
     "drizzle-orm": "^0.44.3",
     "sharp": "^0.33.1",
-    "skia-canvas": "^2.0.2"
+    "skia-canvas": "^2.0.2",
+    "viem": "^2.44.4",
+    "ws": "^8.19.0"
   },
   "trustedDependencies": [
     "skia-canvas"

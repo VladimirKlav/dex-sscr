@@ -1,0 +1,36 @@
+# Database Configuration
+DATABASE_URL=postgres://user:password@host:5432/database
+
+# X1 Network Configuration
+X1_RPC_URL=https://rpc.x1.xyz
+
+# DEX Contract Addresses (Update with actual addresses)
+# X1Swap Factory Contract
+X1SWAP_FACTORY=0x0000000000000000000000000000000000000000
+# X1Swap Router Contract
+X1SWAP_ROUTER=0x0000000000000000000000000000000000000000
+# X1Swap Init Code Hash (for CREATE2 pair address calculation)
+X1SWAP_INIT_CODE_HASH=
+
+# Common Token Addresses
+WETH_ADDRESS=0x0000000000000000000000000000000000000000  # Wrapped XN
+USDC_ADDRESS=0x0000000000000000000000000000000000000000
+
+# Indexer Configuration
+# Block number to start indexing from (0 = start from latest - 1000 blocks)
+START_BLOCK=0
+# Number of blocks to process in each batch
+BATCH_SIZE=100
+# Polling interval in milliseconds
+POLLING_INTERVAL=5000
+# Maximum concurrent RPC requests
+MAX_CONCURRENT_REQUESTS=10
+
+# Cloudflare R2 Configuration (Optional)
+# R2_ACCOUNT_ID=your-account-id
+# R2_ACCESS_KEY_ID=your-access-key
+# R2_SECRET_ACCESS_KEY=your-secret-key
+# R2_BUCKET_NAME=dex-charts
+
+# Logging
+LOG_LEVEL=INFO  # ERROR, WARN, INFO, DEBUG, LOG
