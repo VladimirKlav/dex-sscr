@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun run --watch src/worker.ts",
     "start": "bun run src/worker.ts",
+    "sync": "tsx --env-file .dev.vars scripts/start-xdex-sync.ts",
     "indexer": "tsx --env-file .dev.vars scripts/start-indexer.ts",
     "gen-chart": "tsx --env-file .dev.vars scripts/gen-chart.ts",
     "gen-chart-r2": "tsx --env-file .dev.vars scripts/gen-chart-2-r2.ts",

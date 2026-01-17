@@ -86,19 +86,21 @@ A comprehensive trading bot and DEX tracker for the X1 blockchain, inspired by [
 
 ## 🏃‍♂️ Usage
 
-### Running the Blockchain Indexer
+### Running the XDEX Data Sync Service
 
-The indexer monitors the X1 blockchain for DEX events and stores them in the database:
+The sync service fetches data from XDEX REST API and stores it in the database:
 
 ```bash
-bun run indexer
+bun run sync
 ```
 
 This will:
-- Connect to X1 RPC at https://rpc.x1.xyz
-- Index historical data from START_BLOCK
-- Continue with real-time indexing
-- Log progress every 30 seconds
+- Connect to XDEX API at https://api.xdex.xyz
+- Fetch tokens, pools, and trading data
+- Sync to database every 60 seconds
+- Log progress and status
+
+**Note**: The original blockchain indexer (`bun run indexer`) was designed for EVM chains. X1 is SVM-based (Solana), so we use XDEX's REST API instead. See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 
 ### Running the API Server
 
@@ -297,8 +299,8 @@ export const DEX_CONFIGS = [
 bun run dev                    # Development with hot reload
 bun run start                  # Production server
 
-# Blockchain Indexer
-bun run indexer               # Start indexing X1 blockchain
+# Data Sync
+bun run sync                  # Start XDEX API sync service
 
 # Chart Generation
 bun run gen-chart             # List available tokens
@@ -368,13 +370,13 @@ bun run start
 
 ### Completed ✅
 - [x] Database schema design (tokens, pairs, swaps, liquidity, holders, watchlist, alerts, bot configs)
-- [x] X1 RPC client with viem
-- [x] Blockchain event indexer (PairCreated, Swap, Mint, Burn)
-- [x] Event processor with automatic token metadata fetching
+- [x] XDEX REST API client
+- [x] Data synchronization service (XDEX API → Database)
 - [x] REST API endpoints for pairs, tokens, and statistics
 - [x] Chart generation with entry price indicators
-- [x] Indexer CLI script
+- [x] Architecture documentation (EVM vs SVM)
 - [x] API documentation
+- [x] Setup guides
 
 ### In Progress 🚧
 - [ ] Real-time price tracking & OHLCV generation
