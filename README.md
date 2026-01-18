@@ -1,6 +1,23 @@
 # X1 Trading Bot & DEX Tracker
 
-A comprehensive trading bot and DEX tracker for the X1 blockchain, inspired by [x1.ninja](https://x1.ninja). This project indexes DEX pairs, tracks swaps, monitors liquidity, provides automated trading capabilities, and generates beautiful trading charts.
+A comprehensive trading bot and DEX tracker for the X1 blockchain, inspired by [x1.ninja](https://x1.ninja). This project indexes XDEX pairs from DexScreener, tracks swaps, monitors liquidity, provides automated trading capabilities, and generates beautiful trading charts.
+
+## 🚀 Quick Start
+
+```bash
+# 1. Get a free Neon database at https://console.neon.tech
+# 2. Add your DATABASE_URL to .dev.vars
+# 3. Run the setup script
+bun run setup
+
+# OR run commands manually:
+bun install                        # Install dependencies
+bunx drizzle-kit push             # Setup database
+bun run test-dexscreener          # Test API
+bun run sync                      # Start syncing data
+```
+
+See [QUICKSTART.md](./QUICKSTART.md) for detailed instructions.
 
 ## 🚀 Features
 
@@ -86,21 +103,22 @@ A comprehensive trading bot and DEX tracker for the X1 blockchain, inspired by [
 
 ## 🏃‍♂️ Usage
 
-### Running the XDEX Data Sync Service
+### Running the DexScreener Data Sync Service
 
-The sync service fetches data from XDEX REST API and stores it in the database:
+The sync service fetches X1/XDEX data from DexScreener API and stores it in the database:
 
 ```bash
 bun run sync
 ```
 
 This will:
-- Connect to XDEX API at https://api.xdex.xyz
-- Fetch tokens, pools, and trading data
+- Connect to DexScreener API (https://api.dexscreener.com)
+- Fetch X1/XDEX pairs, tokens, and trading data
 - Sync to database every 60 seconds
+- Display live stats (volume, liquidity, top gainers)
 - Log progress and status
 
-**Note**: The original blockchain indexer (`bun run indexer`) was designed for EVM chains. X1 is SVM-based (Solana), so we use XDEX's REST API instead. See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
+**Note**: We use DexScreener API because it already indexes XDEX data on X1 blockchain. The original blockchain indexer (`bun run indexer`) was designed for EVM chains, but X1 is SVM-based (Solana). See [ARCHITECTURE.md](./ARCHITECTURE.md) for details.
 
 ### Running the API Server
 
