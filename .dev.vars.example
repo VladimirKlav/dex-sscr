@@ -1,5 +1,5 @@
 # Database Configuration
-DATABASE_URL=postgres://user:password@host:5432/database
+DATABASE_URL='postgresql://neondb_owner:npg_FwJEP86AkDLc@ep-rapid-breeze-ahssa4u8-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 
 # X1 Network Configuration
 X1_RPC_URL=https://rpc.x1.xyz
